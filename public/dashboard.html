@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>T-BASS — Dashboard Admin</title>
+<style>
+:root{--bg:#020913;--side:#031321;--panel:#061a2c;--line:#0d5b8d;--blue:#168cff;--red:#ff123b;--green:#16c7ff;--muted:#91a8bc}*{box-sizing:border-box}body{margin:0;background:linear-gradient(rgba(1,7,14,.82),rgba(1,7,14,.94)),url('tbass-cinema-bg.svg') center/cover fixed,linear-gradient(135deg,#01070e,#031728 65%,#020912);color:#f7fbff;font-family:Inter,Arial,sans-serif;min-height:100vh}.top{height:66px;background:#010a14eF;border-bottom:1px solid #123852;display:flex;align-items:center;padding:0 18px;gap:20px;position:sticky;top:0;z-index:5}.brand{font-weight:900;font-size:24px}.brand span{color:var(--red)}.sub{font-size:11px;color:#aab9c8}.topspace{flex:1}.icon{font-size:20px;color:#cfe2f1}.layout{display:grid;grid-template-columns:245px 1fr;min-height:calc(100vh - 66px)}aside{background:rgba(2,14,25,.9);border-right:1px solid #103b59;padding:18px}.navitem{padding:12px 13px;margin:4px 0;border-radius:9px;color:#d8e7f2;font-size:13px}.navitem.active{background:linear-gradient(90deg,#ff123b,#e60035);font-weight:800}.admin{border-top:1px solid #18384e;margin-top:18px;padding-top:18px;color:#c7d7e5}.main{padding:20px;max-width:1400px;width:100%;margin:auto}.login{position:fixed;inset:0;z-index:9999;display:flex;flex-direction:column;justify-content:center;max-width:420px;width:calc(100% - 32px);height:max-content;margin:auto;background:#061a2c;border:1px solid var(--line);border-radius:16px;padding:25px;box-shadow:0 20px 80px #000c}.hide{display:none}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.stat{background:linear-gradient(145deg,#08223a,#041525);border:1px solid #0b5c8e;border-radius:13px;padding:15px}.stat b{font-size:28px;display:block;margin-top:8px}.up{color:#16c7ff;font-size:12px}.panel{margin-top:16px;background:linear-gradient(145deg,#061b2e,#031321);border:1px solid #0b5c8e;border-radius:15px;padding:16px}.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}.row .grow{flex:1}input{padding:11px;border-radius:9px;border:1px solid #1b5d85;background:#03111e;color:#fff}.item{border:1px solid #174d70;border-radius:12px;padding:14px;margin:10px 0;background:#041525}.pill{font-size:11px;border-radius:14px;padding:5px 8px;background:#213243}.pending{background:#5a3f12}.verified{background:#07558a}.activep{background:#07558a}.actions{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}.actions button{padding:10px;border-radius:8px;border:1px solid #2b5872;background:#09223a;color:#fff;cursor:pointer}.actions button:nth-child(2){background:#087cf0;border-color:#16c7ff}.actions button:nth-child(3){background:#b9072e;border-color:#ff1745}.proof{max-width:170px;max-height:170px;border-radius:9px;margin-top:8px;border:1px solid #2d668c}button.loginbtn{width:100%;padding:13px;border:0;border-radius:9px;background:#168cff;color:#fff;font-weight:800;cursor:pointer}.muted{color:var(--muted);font-size:12px}
+@media(max-width:850px){.layout{grid-template-columns:1fr}aside{display:none}.cards{grid-template-columns:1fr 1fr}.actions{grid-template-columns:1fr}.main{padding:14px}.top{height:60px}}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(5px);display:grid;place-items:center;padding:20px;z-index:20}.modal.hide{display:none}.modalbox{width:min(1000px,100%);max-height:90vh;overflow:auto;background:linear-gradient(145deg,#061d31,#020d19);border:1px solid #0d6b9e;border-radius:16px;box-shadow:0 30px 90px #000}.modalhead{padding:15px 18px;border-bottom:1px solid #164664;display:flex;justify-content:space-between}.modalhead button{background:none;border:0;color:white;font-size:18px;cursor:pointer}.detailgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:18px}.detailcard{border:1px solid #174d70;border-radius:12px;padding:15px;background:#041525}.bigaction{width:100%;padding:13px;border-radius:9px;border:0;color:white;font-weight:900;cursor:pointer;margin-top:8px}.green{background:#087cf0}.red{background:#d80738}.blue{background:#087cf0}@media(max-width:700px){.detailgrid{grid-template-columns:1fr}}
+
+.sectioncards{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.sectioncard{border:1px solid #174d70;border-radius:12px;padding:15px;background:#041525}.sectioncard b{font-size:24px}.sectioncard .small{color:#91a8bc;font-size:12px}.actionlink{margin-top:10px;padding:10px;border-radius:8px;border:1px solid #206487;background:#07243a;color:#fff;cursor:pointer;width:100%}@media(max-width:800px){.sectioncards{grid-template-columns:1fr}}
+
+/* V25 — mobile-first dashboard polish */
+@media(max-width:850px){
+  html{scroll-behavior:smooth} body{background-attachment:scroll}
+  .top{padding:0 12px;gap:10px;height:60px;position:sticky}
+  .brand{font-size:20px;line-height:1.05}.sub{font-size:10px}
+  .top .icon{font-size:17px}.top #logout{font-size:12px;padding:9px 10px!important;white-space:nowrap}
+  .layout{display:flex;flex-direction:column;min-height:calc(100vh - 60px)}
+  aside{display:flex;flex-direction:row;gap:6px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;padding:8px 10px;background:#020e1af5;border-right:0;border-bottom:1px solid #103b59;position:sticky;top:60px;z-index:4;-webkit-overflow-scrolling:touch}
+  .navitem{flex:0 0 auto;white-space:nowrap;padding:11px 13px;margin:0;font-size:13px;min-height:42px;display:flex;align-items:center;cursor:pointer}
+  .admin{display:none}
+  .main{padding:12px;width:100%;min-width:0}
+  .main h1{font-size:24px;line-height:1.2;margin:10px 0}
+  .cards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .stat{padding:12px;min-width:0}.stat b{font-size:clamp(20px,5vw,27px);overflow-wrap:anywhere}
+  .panel{padding:12px;border-radius:12px;min-width:0}
+  .row{align-items:stretch}.row input,.row select,.row button{max-width:100%;min-width:0}
+  input,select,textarea{font-size:16px;max-width:100%;min-height:42px}
+  button,.actionlink,.actions button,.bigaction{min-height:44px;touch-action:manipulation}
+  .actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .actions button{padding:10px 8px;overflow-wrap:anywhere}
+  .item{padding:12px;overflow-wrap:anywhere}.proof{max-width:min(100%,220px);height:auto}
+  .sectioncards{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.sectioncard{padding:12px;min-width:0}.sectioncard b{font-size:22px}
+  .login{margin:28px auto;padding:20px;width:100%}
+  .modal{padding:8px;align-items:end}.modalbox{max-height:92dvh;border-radius:16px 16px 8px 8px}.detailgrid{padding:12px;gap:10px}
+  table{display:block;max-width:100%;overflow-x:auto;white-space:nowrap}
+}
+@media(max-width:420px){
+  .top{gap:7px}.top .icon{display:none}.brand{font-size:18px}.top #logout{padding:8px!important}
+  .cards{grid-template-columns:1fr 1fr}.stat{padding:10px}.stat b{font-size:20px}
+  .sectioncards{grid-template-columns:1fr}.actions{grid-template-columns:1fr}
+  .main h1{font-size:21px}.navitem{font-size:12px;padding:10px}
+}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+
+</style></head><body>
+<header class="top"><div class="brand">▶ T-<span>BASS</span><div class="sub">Dashboard Admin</div></div><div class="topspace"></div><div class="icon">♧</div><div class="icon">🔔</div><div class="icon">⚙</div><button id="logout" style="padding:8px 12px;background:#061b2c;border:1px solid #205477;color:white;border-radius:8px">Déconnexion</button></header>
+<div class="layout"><aside><div class="navitem active" onclick="showSection('dashboard',this)">⌂ &nbsp; Tableau de bord</div><div class="navitem" onclick="showSection('requests',this)">♙ &nbsp; Nouvelles demandes</div><div class="navitem" onclick="showSection('clients',this)">♙ &nbsp; Clients</div><div class="navitem" onclick="showSection('payments',this)">▣ &nbsp; Paiements</div><div class="navitem" onclick="showSection('subscriptions',this)">▣ &nbsp; Abonnements</div><div class="navitem" onclick="showSection('activations',this)">⚙ &nbsp; Activations</div><div class="navitem" onclick="showSection('groups',this)">☁ &nbsp; Groupes WhatsApp</div><div class="navitem" onclick="showSection('whatsapp',this)">♧ &nbsp; WhatsApp Privé</div><div class="navitem" onclick="showSection('notifications',this)">♧ &nbsp; Notifications</div><div class="navitem" onclick="showSection('reports',this)">▥ &nbsp; Rapports</div><div class="navitem" onclick="showSection('settings',this)">⚙ &nbsp; Paramètres</div><div class="admin">👤 Admin T-BASS<br><span class="muted">Super Administrateur</span></div></aside>
+<main class="main"><div id="login" class="login"><h2>Dashboard privé</h2><p class="muted">Connexion sécurisée de démonstration.</p><input id="u" placeholder="Username" style="width:100%"><br><br><input id="p" type="password" placeholder="Password" style="width:100%"><br><br><button class="loginbtn" onclick="login()">Se connecter</button><p id="lm"></p></div>
+<div id="app" class="hide"><h1>Tableau de bord</h1><div class="cards"><div class="stat">Nouvelles demandes<b id="pending">0</b><span class="up">↑ à traiter</span></div><div class="stat">Clients actifs<b id="active">0</b><span class="up">↑ en service</span></div><div class="stat">Revenus (ce mois)<b id="revenue">0 HTG</b><span class="up">↑ activations</span></div><div class="stat">Paiements vérifiés<b id="payments">0</b><span class="up">↑ contrôlés</span></div></div>
+<div id="sectionTitle" style="margin:18px 0 8px;color:#9edcff;font-weight:800">Vue générale</div>
+<div id="workspace" class="panel" style="margin-top:10px">
+  <div id="workspaceContent"></div>
+</div>
+<section class="panel"><div class="row"><h2 class="grow">Nouvelles demandes d'inscription</h2><input id="search" oninput="render()" placeholder="Rechercher un client..."><button onclick="exportCSV()" style="padding:11px;border-radius:9px;border:1px solid #197f9f;background:#071b2b;color:#8edfff;font-weight:800;cursor:pointer">⇩ Exporter</button></div><div id="list"></div></section></div></main></div><div id="modal" class="modal hide"><div class="modalbox"><div class="modalhead"><b>← Détail de la demande</b><button onclick="closeModal()">✕</button></div><div id="detail"></div></div></div></main></div>
+<script>
+let data=[];
+async function changeAdminPassword(){
+ const current=document.getElementById('currentAdminPassword').value;
+ const next=document.getElementById('newAdminPassword').value;
+ const confirm=document.getElementById('confirmAdminPassword').value;
+ const msg=document.getElementById('passwordMsg');
+ if(next!==confirm){msg.textContent='Nouvo modpas yo pa menm.';return;}
+ if(next.length<12 || !/[A-Za-z]/.test(next) || !/[0-9]/.test(next)){msg.textContent='Mete omwen 12 karaktè, ak lèt ak chif.';return;}
+ const r=await fetch('/api/admin/change-password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({currentPassword:current,newPassword:next})});
+ const d=await r.json(); msg.textContent=d.message||d.error||'Gen yon erè.';
+ if(r.ok){document.getElementById('currentAdminPassword').value='';document.getElementById('newAdminPassword').value='';document.getElementById('confirmAdminPassword').value='';}
+}
+async function login(){const username=document.getElementById('u').value.trim();const password=document.getElementById('p').value;const msg=document.getElementById('lm');msg.textContent='';const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});const d=await r.json();if(d.ok){document.getElementById('login').classList.add('hide');document.getElementById('app').classList.remove('hide');await load()}else msg.textContent=d.error||'Non konekte. Verifye enfòmasyon yo.'}
+async function load(){const me=await fetch('/api/admin/me');if(!me.ok)return;const [s,c]=await Promise.all([fetch('/api/admin/stats'),fetch('/api/admin/customers')]);const st=await s.json();data=await c.json();pending.textContent=st.pending;active.textContent=st.active;payments.textContent=st.payments;revenue.textContent=st.revenue.toLocaleString()+' HTG';render()}
+function render(){const q=search.value.toLowerCase();list.innerHTML=data.filter(x=>(x.name+x.phone+x.status+x.plan+x.payment_method).toLowerCase().includes(q)).map(x=>`<article class="item"><div class="row"><b>${esc(x.name)}</b><span class="pill">${x.status}</span><span class="pill ${x.payment_status==='VERIFIED'?'verified':'pending'}">${x.payment_status}</span></div><p>📱 ${esc(x.phone)} &nbsp; • &nbsp; Plan ${x.plan} HTG/mois</p><p>💳 ${esc(x.payment_method)}</p><p class="muted">Demande: ${new Date(x.submitted_at).toLocaleString()}</p><img class="proof" src="/api/admin/customers/${x.id}/proof" alt="Preuve de paiement"><div class="actions"><button onclick="openDetail(${x.id})">👁 Voir détail</button><button onclick="verify(${x.id})">✓ Vérifier paiement</button><button onclick="activate(${x.id})">✓ ACTIVER LE CLIENT</button><button onclick="rejectC(${x.id})">✕ REFUSER</button><button onclick="openWhatsApp(${x.id},x.status==='ACTIVE'?'active':'welcome')">WhatsApp</button></div></article>`).join('')||'<p class="muted">Aucune demande.</p>'}
+function openWhatsApp(id,kind='welcome'){
+ const x=data.find(v=>v.id===id); if(!x)return;
+ let phone=String(x.phone||'').replace(/[^0-9]/g,'');
+ if(phone.startsWith('0')) phone='509'+phone.slice(1);
+ if(phone.length===8) phone='509'+phone;
+ if(!phone){alert('Nimewo kliyan an pa disponib.');return;}
+ let message;
+ if(kind==='active' || x.status==='ACTIVE') message=`Bonsoir ${x.name}, bienvenue chez T-BASS Streaming ! Votre abonnement au plan ${x.plan} HTG est activé. Merci de votre confiance. Pour toute question, répondez à ce message.`;
+ else message=`Bonsoir ${x.name}, merci d’avoir choisi T-BASS Streaming. Nous avons reçu votre demande pour le plan ${x.plan} HTG. Votre paiement sera vérifié avant l’activation. Nous vous tiendrons informé(e).`;
+ window.open('https://wa.me/'+phone+'?text='+encodeURIComponent(message),'_blank','noopener');
+}
+async function act(url){const r=await fetch(url,{method:'POST'});const d=await r.json();if(!d.ok)alert(d.error||'Erreur');load()}
+const verify=id=>act('/api/admin/customers/'+id+'/verify-payment');const activate=id=>act('/api/admin/customers/'+id+'/activate');const rejectC=id=>act('/api/admin/customers/'+id+'/reject');
+async function renewSubscription(id){if(!confirm('Ou verifye peman renouvèlman kliyan sa a deja?'))return;const r=await fetch('/api/admin/customers/'+id+'/renew',{method:'POST'});const x=await r.json();if(!r.ok){alert(x.error||'Erè');return;}alert(x.message||'Abònman renouvle.');await load();showSection('subscriptions',document.querySelectorAll('aside .navitem')[4]);}
+async function expireSubscription(id){if(!confirm('Make abònman sa a kòm ekspire?'))return;const r=await fetch('/api/admin/customers/'+id+'/expire',{method:'POST'});const x=await r.json();if(!r.ok){alert(x.error||'Erè');return;}alert(x.message||'Abònman mete kòm ekspire.');await load();showSection('subscriptions',document.querySelectorAll('aside .navitem')[4]);}
+
+
+function openDetail(id){
+ const x=data.find(v=>v.id===id); if(!x)return;
+ detail.innerHTML=`<div class="detailgrid">
+ <div class="detailcard"><h3>${esc(x.name)}</h3><p>📱 ${esc(x.phone)}</p><p>🟡 Statut: ${esc(x.status)}</p><img class="proof" src="/api/admin/customers/${x.id}/proof"></div>
+ <div class="detailcard"><h3>Informations d'abonnement</h3><p>Plan: <b>${x.plan} HTG / mois</b></p><p>Paiement: ${esc(x.payment_method)}</p><p>Vérification: ${esc(x.payment_status)}</p></div>
+ <div class="detailcard"><h3>Actions</h3><button class="bigaction green" onclick="activate(${x.id});closeModal()">✓ Activer le client</button><button class="bigaction blue" onclick="verify(${x.id})">✓ Vérifier le paiement</button><button class="bigaction red" onclick="rejectC(${x.id});closeModal()">✕ Refuser la demande</button></div>
+ <div class="detailcard"><h3>Historique</h3><p class="muted">Demande reçue: ${new Date(x.submitted_at).toLocaleString()}</p><p class="muted">Activation: ${x.activated_at?new Date(x.activated_at).toLocaleString():'En attente'}</p></div>
+ </div>`;
+ modal.classList.remove('hide');
+}
+function closeModal(){modal.classList.add('hide')}
+
+
+
+function setActive(el){document.querySelectorAll('aside .navitem').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active')}
+function showSection(name,el){
+ setActive(el);
+ const titles={dashboard:'Vue générale',requests:'Nouvelles demandes',clients:'Clients',payments:'Paiements',subscriptions:'Abonnements',activations:'Activations',groups:'Groupes WhatsApp',whatsapp:'WhatsApp Privé',notifications:'Notifications',reports:'Rapports',settings:'Paramètres'};
+ sectionTitle.textContent=titles[name]||'T-BASS';
+ const active=data.filter(x=>x.status==='ACTIVE'), pendingRows=data.filter(x=>x.status==='PENDING'), verified=data.filter(x=>x.payment_status==='VERIFIED');
+ let html='';
+ if(name==='dashboard') html=`<div class="sectioncards">
+ <div class="sectioncard">👥<div class="small">Clients actifs</div><b>${active.length}</b></div>
+ <div class="sectioncard">🧾<div class="small">Demandes en attente</div><b>${pendingRows.length}</b></div>
+ <div class="sectioncard">💰<div class="small">Paiements vérifiés</div><b>${verified.length}</b></div></div>`;
+ if(name==='requests') html=`<h3>Demandes à traiter</h3><p class="muted">${pendingRows.length} demande(s) attendent une vérification.</p><button class="actionlink" onclick="focusPending()">Afficher les demandes</button>`;
+ if(name==='clients') html=`<h3>Base clients</h3><p class="muted">${data.length} client(s) enregistré(s).</p><button class="actionlink" onclick="document.getElementById('search').focus()">Rechercher un client</button>`;
+ if(name==='payments') html=`<h3>Paiements</h3><div class="sectioncards"><div class="sectioncard">⏳<div class="small">À vérifier</div><b>${data.filter(x=>x.payment_status==='PENDING').length}</b></div><div class="sectioncard">✓<div class="small">Vérifiés</div><b>${verified.length}</b></div></div>`;
+ if(name==='subscriptions') { const expired=data.filter(x=>x.status==='EXPIRED'); const ending=data.filter(x=>x.status==='ACTIVE'&&x.subscription_end&&((new Date(x.subscription_end)-Date.now())/86400000)<=7); html=`<h3>Gestion des abonnements</h3><div class="sectioncards"><div class="sectioncard">🔵<div class="small">Actifs</div><b>${active.length}</b></div><div class="sectioncard">⏰<div class="small">Expire bientôt (7 jours)</div><b>${ending.length}</b></div><div class="sectioncard">⌛<div class="small">Expirés</div><b>${expired.length}</b></div><div class="sectioncard">📅<div class="small">Durée standard</div><b>30 jours</b></div></div><p class="muted">Renouvèlman mande verifikasyon peman an anvan.</p><div class="subscriptionlist">${data.filter(x=>['ACTIVE','EXPIRED'].includes(x.status)).map(x=>`<article class="item"><div class="row"><b>${esc(x.name)}</b><span class="pill">${esc(x.status)}</span></div><p>📱 ${esc(x.phone)} • Plan ${esc(x.plan)} HTG / mwa</p><p class="muted">Kòmanse: ${x.subscription_start?new Date(x.subscription_start).toLocaleDateString():'—'} • Ekspire: ${x.subscription_end?new Date(x.subscription_end).toLocaleDateString():'—'}</p><p class="muted">Peman: ${esc(x.payment_status)}</p><div class="actions"><button onclick="verify(${x.id})">✓ Verifye peman</button><button onclick="renewSubscription(${x.id})">↻ Renouvle 30 jou</button><button onclick="expireSubscription(${x.id})">Make ekspire</button></div></article>`).join('')||'<p class="muted">Pa gen abònman aktif oswa ekspire ankò.</p>'}</div>`; }
+ if(name==='activations') html=`<h3>Activations</h3><p class="muted">Les clients sont activés manuellement après vérification du paiement.</p><button class="actionlink" onclick="showSection('requests',document.querySelectorAll('aside .navitem')[1])">Traiter les demandes</button>`;
+ if(name==='groups') html=`<h3>Groupes WhatsApp</h3><p class="muted">Le lien est enregistré côté serveur.</p><input id="groupLink" placeholder="https://chat.whatsapp.com/..." style="width:100%;padding:11px;border-radius:9px;border:1px solid #1b5d85;background:#03111e;color:#fff"><button class="actionlink" onclick="saveSettings()">Enregistrer le lien</button><p id="groupMsg" class="muted"></p>`;
+ if(name==='whatsapp') html=`<h3>WhatsApp Privé</h3><p class="muted">Numéro de contact administrateur.</p><input id="waNumber" placeholder="+509..." style="width:100%;padding:11px;border-radius:9px;border:1px solid #1b5d85;background:#03111e;color:#fff"><button class="actionlink" onclick="saveSettings()">Enregistrer</button><p id="waMsg" class="muted"></p>`;
+ if(name==='notifications') html=`<h3>Centre de notifications</h3><p class="muted">Les messages WhatsApp sont préparés pour que l’administrateur les relise et les envoie manuellement.</p><div class="sectioncards"><div class="sectioncard">🔔<div class="small">Nouvelles demandes</div><b>${pendingRows.length}</b></div><div class="sectioncard">💳<div class="small">Paiements à vérifier</div><b>${data.filter(x=>x.payment_status==='PENDING').length}</b></div><div class="sectioncard">⏰<div class="small">Abonnements bientôt expirés</div><b>${data.filter(x=>x.status==='ACTIVE'&&x.subscription_end&&((new Date(x.subscription_end)-Date.now())/86400000)<=7&&((new Date(x.subscription_end)-Date.now())/86400000)>=0).length}</b></div></div><h3 style="margin-top:18px">Actions à faire</h3>${data.filter(x=>x.status==='PENDING'||x.payment_status==='PENDING'||(x.status==='ACTIVE'&&x.subscription_end&&((new Date(x.subscription_end)-Date.now())/86400000)<=7)).map(x=>`<article class="item"><div class="row"><b>${esc(x.name)}</b><span class="pill">${esc(x.status)}</span><span class="pill ${x.payment_status==='VERIFIED'?'verified':'pending'}">${esc(x.payment_status)}</span></div><p>📱 ${esc(x.phone)} • Plan ${esc(x.plan)} HTG/mois</p><p class="muted">${x.status==='PENDING'?'Nouvelle demande à examiner':x.payment_status==='PENDING'?'Paiement à vérifier':'Abonnement bientôt expiré'}</p><div class="actions"><button onclick="openDetail(${x.id})">Voir le dossier</button><button onclick="openWhatsApp(${x.id},'welcome')">WhatsApp client</button></div></article>`).join('')||'<p class="muted">Aucune action en attente.</p>'}`;
+ if(name==='reports') html=`<h3>Rapports & statistiques</h3>
+ <p class="muted">Ces chiffres sont calculés à partir des dossiers enregistrés dans le dashboard. Les revenus affichés correspondent aux dossiers dont le paiement est marqué « vérifié ».</p>
+ <div class="row" style="margin:12px 0"><label for="reportPeriod">Période :</label><select id="reportPeriod" onchange="renderReports()" style="padding:10px;border-radius:8px;border:1px solid #1b5d85;background:#03111e;color:#fff"><option value="month">Mois en cours</option><option value="all">Tout l’historique</option><option value="30">30 derniers jours</option><option value="7">7 derniers jours</option></select><button class="actionlink" style="width:auto;margin:0" onclick="exportReportCSV()">⇩ Exporter le rapport CSV</button></div>
+ <div id="reportContent"></div><h3 style="margin-top:20px">Historique des actions admin</h3><div id="auditBox">Chargement...</div>`;
+ if(name==='settings') html=`<h3>Sekirite Dashboard</h3><p class="muted">Chanje modpas admin ou. Sèvi ak yon modpas inik ou pa itilize sou lòt kont.</p><div class="sectioncard"><h4>🔐 Chanje modpas administratè</h4><input id="currentAdminPassword" type="password" autocomplete="current-password" placeholder="Modpas aktyèl la" style="width:100%;margin:6px 0"><input id="newAdminPassword" type="password" autocomplete="new-password" placeholder="Nouvo modpas (12+ karaktè)" style="width:100%;margin:6px 0"><input id="confirmAdminPassword" type="password" autocomplete="new-password" placeholder="Konfime nouvo modpas la" style="width:100%;margin:6px 0"><button class="actionlink" onclick="changeAdminPassword()">Chanje modpas</button><p id="passwordMsg" class="muted" aria-live="polite"></p></div><p class="muted">Pou sekirite pwodiksyon: mete TBASS_ADMIN_USER, TBASS_ADMIN_PASSWORD ak SESSION_SECRET nan anviwònman hosting lan. Modpas ki chanje nan paj sa a rete aktif nan pwosesis sèvè aktyèl la; mete nouvo modpas la nan hosting lan tou pou l pa pèdi apre rekòmansman.</p>`;
+ workspaceContent.innerHTML=html;
+ if(name==='groups'||name==='whatsapp')loadSettings(); if(name==='reports'){loadAudit();renderReports();}
+ workspace.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+
+function reportRows(){
+ const period=document.getElementById('reportPeriod')?.value||'month';
+ const now=new Date(); const start=new Date(now); start.setHours(0,0,0,0);
+ if(period==='month') start.setDate(1); else if(period==='30') start.setDate(start.getDate()-29); else if(period==='7') start.setDate(start.getDate()-6); else return data.slice();
+ return data.filter(x=>{const d=new Date(x.submitted_at);return !Number.isNaN(d.getTime())&&d>=start&&d<=now;});
+}
+function renderReports(){
+ const root=document.getElementById('reportContent'); if(!root)return;
+ const rows=reportRows(), activeRows=rows.filter(x=>x.status==='ACTIVE'), pendingRows=rows.filter(x=>x.status==='PENDING'), expiredRows=rows.filter(x=>x.status==='EXPIRED'), verifiedRows=rows.filter(x=>x.payment_status==='VERIFIED');
+ const revenue=verifiedRows.reduce((sum,x)=>sum+(Number(x.amount_htg)||0),0);
+ const plans={}; rows.forEach(x=>{const k=String(x.plan||'Autre');plans[k]=(plans[k]||0)+1;});
+ const months=[]; const now=new Date(); for(let i=5;i>=0;i--){const d=new Date(now.getFullYear(),now.getMonth()-i,1);months.push({key:d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'),label:d.toLocaleDateString('fr-FR',{month:'short'}),count:0});}
+ data.forEach(x=>{const d=new Date(x.submitted_at);if(Number.isNaN(d.getTime()))return;const m=months.find(y=>y.key===d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'));if(m)m.count++;});
+ const max=Math.max(1,...months.map(m=>m.count));
+ const bars=months.map(m=>`<div style="flex:1;min-width:25px;text-align:center"><div title="${m.count} demande(s)" style="height:${Math.max(4,m.count/max*120)}px;background:linear-gradient(180deg,#16c7ff,#087cf0);border-radius:6px 6px 0 0;margin:0 auto;width:min(34px,80%)"></div><div class="muted" style="margin-top:6px">${esc(m.label)}</div><b style="font-size:12px">${m.count}</b></div>`).join('');
+ root.innerHTML=`<div class="sectioncards"><div class="sectioncard"><div class="small">Demandes enregistrées</div><b>${rows.length}</b></div><div class="sectioncard"><div class="small">Clients actifs</div><b>${activeRows.length}</b></div><div class="sectioncard"><div class="small">Paiements vérifiés</div><b>${verifiedRows.length}</b></div><div class="sectioncard"><div class="small">Revenus vérifiés (HTG)</div><b>${revenue.toLocaleString('fr-FR')}</b></div></div>
+ <div class="panel"><h3>Demandes sur les 6 derniers mois</h3><div style="display:flex;align-items:end;gap:12px;min-height:165px;padding:12px 4px 0;border-bottom:1px solid #174d70">${bars}</div><p class="muted">Le graphique compte les demandes par date de soumission, indépendamment de leur statut actuel.</p></div>
+ <div class="sectioncards" style="margin-top:12px"><div class="sectioncard"><div class="small">En attente</div><b>${pendingRows.length}</b></div><div class="sectioncard"><div class="small">Expirés</div><b>${expiredRows.length}</b></div><div class="sectioncard"><div class="small">Taux d’activation</div><b>${rows.length?Math.round(activeRows.length/rows.length*100):0}%</b></div></div>
+ <div class="panel"><h3>Répartition par plan</h3>${Object.keys(plans).length?Object.entries(plans).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div style="margin:10px 0"><div class="row"><span class="grow">Plan ${esc(k)}</span><b>${v}</b></div><div style="height:8px;background:#102b40;border-radius:6px;overflow:hidden"><div style="height:100%;width:${Math.round(v/Math.max(1,rows.length)*100)}%;background:#168cff"></div></div></div>`).join(''):'<p class="muted">Aucune donnée pour cette période.</p>'}</div>`;
+}
+function exportReportCSV(){
+ const rows=reportRows(); const summary=[['Indicateur','Valeur'],['Demandes',rows.length],['Clients actifs',rows.filter(x=>x.status==='ACTIVE').length],['En attente',rows.filter(x=>x.status==='PENDING').length],['Paiements vérifiés',rows.filter(x=>x.payment_status==='VERIFIED').length],['Revenus vérifiés HTG',rows.filter(x=>x.payment_status==='VERIFIED').reduce((n,x)=>n+(Number(x.amount_htg)||0),0)],[],['ID','Nom','Téléphone','Plan','Montant HTG','Méthode','Statut client','Statut paiement','Soumis le']];
+ rows.forEach(x=>summary.push([x.id,x.name,x.phone,x.plan,x.amount_htg,x.payment_method,x.status,x.payment_status,x.submitted_at]));
+ const csv=summary.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n'); const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+csv],{type:'text/csv;charset=utf-8'}));a.download='tbass-rapport-statistiques.csv';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+}
+
+async function saveSettings(){
+ const body={};
+ if(document.getElementById('groupLink')) body.whatsapp_group=document.getElementById('groupLink').value;
+ if(document.getElementById('waNumber')) body.whatsapp_private=document.getElementById('waNumber').value;
+ const r=await fetch('/api/admin/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
+ const x=await r.json(); const el=document.getElementById(body.whatsapp_group!==undefined?'groupMsg':'waMsg'); if(el)el.textContent=x.ok?'Enregistré avec succès.':'Erreur';
+}
+async function loadSettings(){
+ const r=await fetch('/api/admin/settings'); if(!r.ok)return; const x=await r.json();
+ if(document.getElementById('groupLink'))document.getElementById('groupLink').value=x.whatsapp_group||'';
+ if(document.getElementById('waNumber'))document.getElementById('waNumber').value=x.whatsapp_private||'';
+}
+async function loadAudit(){
+ const r=await fetch('/api/admin/audit'); if(!r.ok)return; const rows=await r.json();
+ auditBox.innerHTML=rows.map(x=>`<div class="sectioncard" style="margin:7px 0"><b>${esc(x.action)}</b><div class="small">${esc(x.customer_name||'Système')} • ${new Date(x.created_at).toLocaleString()}</div></div>`).join('')||'<p class="muted">Aucun historique.</p>';
+}
+
+function saveLocal(key,msg){localStorage.setItem('tbass_'+key,document.getElementById(key).value);document.getElementById(key.replace('Link','Msg').replace('Number','Msg')).textContent=msg}
+
+function focusPending(){document.querySelector('.panel').scrollIntoView({behavior:'smooth'});search.value='PENDING';render()}
+function exportCSV(){
+ const rows=[['ID','Nom','Téléphone','Plan','Méthode de paiement','Statut','Statut paiement','Date']];
+ data.forEach(x=>rows.push([x.id,x.name,x.phone,x.plan,x.payment_method,x.status,x.payment_status,x.submitted_at]));
+ const csv=rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\n');
+ const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='tbass-clients.csv';a.click();URL.revokeObjectURL(a.href);
+}
+
+logout.onclick=async()=>{await fetch('/api/admin/logout',{method:'POST'});location.reload()};function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}fetch('/api/admin/me').then(r=>{if(r.ok){document.getElementById('login').classList.add('hide');document.getElementById('app').classList.remove('hide');load()}else{document.getElementById('login').classList.remove('hide');document.getElementById('app').classList.add('hide')}})
+</script></body></html>
