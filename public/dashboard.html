@@ -182,5 +182,5 @@ function exportCSV(){
  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='tbass-clients.csv';a.click();URL.revokeObjectURL(a.href);
 }
 
-logout.onclick=async()=>{await fetch('/api/admin/logout',{method:'POST'});location.reload()};function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}fetch('/api/admin/me').then(r=>{if(r.ok){document.getElementById('login').classList.add('hide');document.getElementById('app').classList.remove('hide');load()}else{document.getElementById('login').classList.remove('hide');document.getElementById('app').classList.add('hide')}})
+logout.onclick=async()=>{try{await fetch('/api/admin/logout',{method:'POST',credentials:'same-origin'})}finally{location.replace('/login.html')}};function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}fetch('/api/admin/me',{credentials:'same-origin'}).then(r=>{if(r.ok){document.getElementById('login').classList.add('hide');document.getElementById('app').classList.remove('hide');load()}else{location.replace('/login.html')}}).catch(()=>location.replace('/login.html'))
 </script></body></html>
