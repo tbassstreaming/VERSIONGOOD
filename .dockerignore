@@ -1,0 +1,7 @@
+node_modules
+tbass.sqlite
+tbass.sqlite-shm
+tbass.sqlite-wal
+.env
+uploads/*
+npm-debug.log
