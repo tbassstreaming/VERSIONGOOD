@@ -112,6 +112,9 @@ app.use(session({
   cookie: {httpOnly:true, sameSite:"lax", secure:process.env.NODE_ENV==='production', maxAge: 1000*60*60*8}
 }));
 app.use(express.static(path.join(ROOT, "public")));
+// Friendly admin entry point: check session in admin.html, then open Dashboard or login.
+app.get("/admin", (req, res) => res.redirect("/admin.html"));
+app.get("/admin/", (req, res) => res.redirect("/admin.html"));
 
 const storage = multer.diskStorage({
   destination: (_, __, cb) => cb(null, UPLOADS),
@@ -148,7 +151,7 @@ function expireSubscriptions(){
  tx(rows);
 }
 
-app.get("/api/health",(req,res)=>res.json({ok:true,service:"T-BASS",version:"V25.1"}));
+app.get("/api/health",(req,res)=>res.json({ok:true,service:"T-BASS",version:"V25.2"}));
 
 app.post("/api/apply", applyLimiter, upload.fields([
   {name:"customer_photo", maxCount:1},
